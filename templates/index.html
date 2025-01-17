@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Resume Score Checker</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        function displayScore(score) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `ATS Score: ${score}%`;
+            resultDiv.style.display = 'block';
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            const response = await fetch('/check_score', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                displayScore(result['ATS Score']);
+            } else {
+                alert('Error calculating ATS Score. Please try again.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>ATS Resume Score Checker</h1>
+        <form id="atsForm" onsubmit="handleSubmit(event)" enctype="multipart/form-data">
+            <label for="job_description">Job Description:</label>
+            <textarea id="job_description" name="job_description" rows="5" placeholder="Paste job description here..." required></textarea>
+
+            <label for="resume_text">Resume Text:</label>
+            <textarea id="resume_text" name="resume_text" rows="5" placeholder="Paste resume text here..."></textarea>
+
+            <label for="resume_file">Upload Resume:</label>
+            <input type="file" id="resume_file" name="resume_file" accept=".txt,.pdf">
+
+            <button type="submit">Get ATS Score</button>
+        </form>
+        <div id="result" style="display:none; margin-top: 20px; color: #00e5ff; font-size: 18px;"></div>
+    </div>
+</body>
+</html>
+
+
+
